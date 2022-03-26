@@ -21,7 +21,9 @@ if ( isset( $_POST['login'] ) ) {
             if (password_verify($password, $row['password'])){
 	            $_SESSION['sess_user_id']   = $row['id'];
 	            $_SESSION['sess_user_name'] = $row['username'];
-	            $_SESSION['sess_name']      = $row['nom'];
+	            $_SESSION['sess_name']      = $row['prenom'];
+	            $_SESSION['sess_lastname']      = $row['nom'];
+	            header( 'location:index.php' );
             } else {
 				$msg = "Invalid username and password!";
 			}
@@ -37,10 +39,10 @@ if ( isset( $_POST['login'] ) ) {
 <form method="post" action="">
     <h2>Connexion</h2>
     <label>Nom d'utilisateur :
-        <input type="text" name="username" value="" autocomplete="off"/>
+        <input type="text" name="username" value="" autocomplete="off" required>
     </label>
     <label for="password">Mot de passe:
-        <input type="password" name="password" value="" autocomplete="off"/>
+        <input type="password" name="password" value="" autocomplete="off" required>
     </label>
     <input type="submit" name="login" id="login" value="Login"/>
     <span class="loginMsg"><?php echo @$msg; ?></span>

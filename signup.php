@@ -44,22 +44,22 @@ if ( isset( $_POST['signup'] ) ) {
     <h2>Créer un compte</h2>
     <label class="firstLabel">
         Nom d'utilisateur :
-        <input type="text" name="username" value="" autocomplete="off"/>
+        <input type="text" name="username" value="" autocomplete="off" required>
     </label>
 
     <label>
         Mot de passe:
-        <input type="password" name="password" value="" autocomplete="off"/>
+        <input type="password" name="password" value="" autocomplete="off" required>
     </label>
 
     <label>
         Nom
-        <input type="text" name="lastname" value="" autocomplete="on">
+        <input type="text" name="lastname" value="" autocomplete="on" required>
     </label>
 
     <label>
         Prénom
-        <input type="text" name="name" value="" autocomplete="on">
+        <input type="text" name="name" value="" autocomplete="on" required>
     </label>
 
     <input type="submit" name="signup" value="Créer le compte"/>
