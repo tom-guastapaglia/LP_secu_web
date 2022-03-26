@@ -9,13 +9,9 @@ if ( isset( $_POST['signup'] ) ) {
 	$name     = trim( $_POST['name'] );
 	$lastname = trim( $_POST['lastname'] );
 
-	var_dump( $username );
-	var_dump( $name );
-	var_dump( $lastname );
 	// Hash du password
 	$password_brut = trim( $_POST['password'] );
 	$password = password_hash( $password_brut, PASSWORD_DEFAULT );
-	var_dump( $password );
 
 	if ( isset( $_POST['username'] ) && isset( $_POST['lastname'] ) && isset( $_POST['name'] ) && isset( $_POST['password'] ) ) {
 		try {
