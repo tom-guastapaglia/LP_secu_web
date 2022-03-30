@@ -9,28 +9,57 @@ if ( isset( $_POST['form'] ) ) {
 	$lastname = trim( $_POST['lastname'] );
 	$phone    = trim( $_POST['phone'] );
 	$mail     = trim( $_POST['mail'] );
-	$adresse   = trim( $_POST['adresse'] );
+	$adresse  = trim( $_POST['adresse'] );
 	$fileid   = trim( $_POST['fileid'] );
 
-	if ( $_POST['name'] != "" && $_POST['lastname'] != "" && $_POST['phone'] != "" && $_POST['mail'] != "" && $_POST['adresse'] != "") {
+
+	if ( $_POST['name'] != "" && $_POST['lastname'] != "" && $_POST['phone'] != "" && $_POST['mail'] != "" && $_POST['adresse'] != "" ) {
 		try {
+
+			$fileTmpPath = $_FILES['fileid']['tmp_name'];
+			$fileName = $_FILES['fileid']['name'];
+			$fileSize = $_FILES['fileid']['size'];
+			$fileType = $_FILES['fileid']['type'];
+			$fileNameCmps = explode(".", $fileName);
+			$fileExtension = strtolower(end($fileNameCmps));
+
+			$newFileName = md5(time() . $fileName) . '.' . $fileExtension;
+
+			$allowedfileExtensions = array('jpg', 'png', 'pdf', 'tiff');
+			if (in_array($fileExtension, $allowedfileExtensions)) {
+				$uploadFileDir = './uploaded_files/';
+				$dest_path = $uploadFileDir . $newFileName;
+
+				if(move_uploaded_file($fileTmpPath, $dest_path))
+				{
+					$msg ='File is successfully uploaded.';
+				}
+				else
+				{
+					$msg = 'There was some error moving the file to upload directory. Please make sure the upload directory is writable by web server.';
+				}
+			}
+
 			$query = /** @lang sql */
-				"INSERT INTO `data` (user_id, phone, mail, adresse, file_id) VALUES(
+				"REPLACE INTO `user_details` (client_id, nom, prenom, mail, tel, adresse, fichier) VALUES(
                         :user_id,
-                        :phone,
+                        :last_name,
+                        :name,
                         :mail,
+                        :phone,
                         :adresse,
-                        :file_id
+                        :fileid
                         )";
-            var_dump($query);
-			$stmt  = $db->prepare( $query );
+			$stmt = $db->prepare( $query );
 			$stmt->execute(
 				array(
-					":user_id" => $_SESSION['sess_user_id'],
+					":user_id"   => $_SESSION['sess_user_id'],
+					":last_name" => $lastname,
+					":name"      => $name,
+					":mail"      => $mail,
 					":phone"     => $phone,
-					":mail" => $mail,
-					":adresse" => $adresse,
-					":file_id" => $fileid,
+					":adresse"   => $adresse,
+					":fileid"    => $newFileName
 				)
 			);
 		} catch ( PDOException $e ) {
@@ -48,7 +77,7 @@ if ( isset( $_SESSION['sess_user_id'] ) && $_SESSION['sess_user_id'] != "" ) {
     <h4><a href="logout.php">Se déconnecter</a></h4>
 
 
-    <form method="post" action="">
+    <form method="post" action="" enctype="multipart/form-data">
         <h2>Formulaire de données</h2>
         <label class="firstLabel">
             Prénom :

@@ -11,24 +11,44 @@ if ( isset( $_POST['signup'] ) ) {
 
 	// Hash du password
 	$password_brut = trim( $_POST['password'] );
-	$password = password_hash( $password_brut, PASSWORD_DEFAULT );
+	$password      = password_hash( $password_brut, PASSWORD_DEFAULT );
 
 	if ( isset( $_POST['username'] ) && isset( $_POST['lastname'] ) && isset( $_POST['name'] ) && isset( $_POST['password'] ) ) {
+		/**
+		 * Ajout des premières informations de connexion dans USER
+		 */
 		try {
 			$query = /** @lang sql */
-				"INSERT INTO `user` (username, prenom, nom, password) VALUES(
+				"INSERT INTO `user` (username, password) VALUES(
                         :username,
-                        :name,
-                        :lastname,
                         :password
                         )";
 			$stmt  = $db->prepare( $query );
 			$stmt->execute(
 				array(
 					":username" => $username,
-					":name"     => $name,
-					":lastname" => $lastname,
 					":password" => $password,
+				)
+			);
+		} catch ( PDOException $e ) {
+			echo "Error : " . $e->getMessage();
+		}
+		/**
+		 * Ajout des secondes informations dans USER_DETAILS
+		 */
+		try {
+			$query = /** @lang sql */
+				"INSERT INTO `user_details` (client_id, nom, prenom) VALUES(
+                        :id,
+                        :last_name,
+                        :name
+                        )";
+			$stmt  = $db->prepare( $query );
+			$stmt->execute(
+				array(
+					":id" => $db->lastInsertId(),
+					":name" => $name,
+                    ":last_name" => $lastname,
 				)
 			);
 		} catch ( PDOException $e ) {

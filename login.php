@@ -16,13 +16,17 @@ if ( isset( $_POST['login'] ) ) {
 			$stmt->execute();
 			$count = $stmt->rowCount();
 			$row   = $stmt->fetch( PDO::FETCH_ASSOC );
-            var_dump( $row['password']);
-            var_dump( $password);
-            if (password_verify($password, $row['password'])){
+
+            $query_details = "SELECT * FROM `user_details` WHERE `client_id`=:id";
+            $stmt_details = $db->prepare($query_details);
+            $stmt_details->bindParam('id', $row['id'], PDO::PARAM_STR);
+			$stmt_details->execute();
+			$row_details   = $stmt_details->fetch( PDO::FETCH_ASSOC );
+			if (password_verify($password, $row['password'])){
 	            $_SESSION['sess_user_id']   = $row['id'];
 	            $_SESSION['sess_user_name'] = $row['username'];
-	            $_SESSION['sess_name']      = $row['prenom'];
-	            $_SESSION['sess_lastname']      = $row['nom'];
+	            $_SESSION['sess_name']      = $row_details['prenom'];
+	            $_SESSION['sess_lastname']      = $row_details['nom'];
 	            header( 'location:index.php' );
             } else {
 				$msg = "Invalid username and password!";
